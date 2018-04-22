@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -25,5 +26,11 @@ public class OffersController {
         return this.repository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @SuppressWarnings("unused")
+    Collection<Offer> getAll() {
+        return this.repository.findAll();
     }
 }

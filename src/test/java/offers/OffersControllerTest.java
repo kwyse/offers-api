@@ -1,6 +1,7 @@
 package offers;
 
 import offers.discount.PercentageDiscount;
+import offers.discount.RelativeDiscount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,7 @@ public class OffersControllerTest {
     public void getSingleExisting() throws Exception {
         this.mock.perform(get("/offers/" + this.offer.getId()))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(this.offer.getId().toString())))
                 .andExpect(jsonPath("$.description", is(this.offer.getDescription())))
                 .andExpect(jsonPath("$.original_price", is(this.offer.getOriginalPrice().toString())))
                 .andExpect(jsonPath("$.discounted_price", is(this.offer.getDiscountedPrice().toString())))
@@ -67,5 +69,21 @@ public class OffersControllerTest {
     public void getSingleNonExisting() throws Exception {
         this.mock.perform(get("/offers/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getAll() throws Exception {
+        Currency currency = Currency.getInstance("GBP");
+        Offer anotherOffer = new OfferBuilder()
+                .withOriginalPrice(new Amount(new BigDecimal(25.0), currency))
+                .withDiscount(new RelativeDiscount(new Amount(new BigDecimal(5.0), currency)))
+                .build();
+
+        anotherOffer = this.repository.save(anotherOffer);
+
+        this.mock.perform(get("/offers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(this.offer.getId().toString())))
+                .andExpect(jsonPath("$[1].id", is(anotherOffer.getId().toString())));
     }
 }

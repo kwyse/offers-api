@@ -5,8 +5,8 @@ import offers.Amount;
 public class RelativeDiscount implements Discount {
     private Amount amount;
 
-    public RelativeDiscount(Amount percentage) {
-        this.amount = percentage;
+    public RelativeDiscount(Amount amount) {
+        this.amount = amount;
     }
 
     @Override
