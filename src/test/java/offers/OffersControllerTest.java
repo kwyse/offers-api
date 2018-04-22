@@ -1,5 +1,6 @@
 package offers;
 
+import offers.discount.PercentageDiscount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -36,7 +39,16 @@ public class OffersControllerTest {
         this.mock = MockMvcBuilders.webAppContextSetup(context).build();
         this.repository.deleteAllInBatch();
 
-        this.offer = new Offer("offer description");
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        this.offer = new OfferBuilder()
+                .withDescription("offerDescription")
+                .withOriginalPrice(new Amount(BigDecimal.valueOf(2.56), Currency.getInstance("GBP")))
+                .withDiscount(new PercentageDiscount(10))
+                .withExpiryDate(calendar.getTime())
+                .build();
+
         this.repository.save(this.offer);
     }
 
@@ -44,11 +56,15 @@ public class OffersControllerTest {
     public void getSingleExisting() throws Exception {
         this.mock.perform(get("/offers/" + this.offer.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.description", is(this.offer.getDescription())));
+                .andExpect(jsonPath("$.description", is(this.offer.getDescription())))
+                .andExpect(jsonPath("$.original_price", is(this.offer.getOriginalPrice().toString())))
+                .andExpect(jsonPath("$.discounted_price", is(this.offer.getDiscountedPrice().toString())))
+                .andExpect(jsonPath("$.expiry_date", is(new SimpleDateFormat("yyyy-MM-dd").format(this.offer.getExpiryDate()))))
+                .andExpect(jsonPath("$.is_valid", is(this.offer.getIsValid())));
     }
 
     @Test
-    public void getSingleNotExisting() throws Exception {
+    public void getSingleNonExisting() throws Exception {
         this.mock.perform(get("/offers/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
