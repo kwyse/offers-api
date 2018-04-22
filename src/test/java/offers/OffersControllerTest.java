@@ -7,12 +7,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,8 +37,17 @@ public class OffersControllerTest {
     private OffersRepository repository;
     @Autowired
     private WebApplicationContext context;
+    private HttpMessageConverter jsonMapper;
 
     private Offer offer;
+
+    @Autowired
+    void setConverters(HttpMessageConverter<?>[] converters) {
+        this.jsonMapper = Arrays.stream(converters)
+                .filter(messageConverter -> messageConverter instanceof MappingJackson2HttpMessageConverter)
+                .findAny()
+                .orElse(null);
+    }
 
     @Before
     public void setup() {
@@ -85,5 +99,20 @@ public class OffersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(this.offer.getId().toString())))
                 .andExpect(jsonPath("$[1].id", is(anotherOffer.getId().toString())));
+    }
+
+    @Test
+    public void updateIsValid() throws Exception {
+        OfferUpdate update = new OfferUpdate(null, null, false);
+        String updateJson = this.encodeToJson(update);
+
+        this.mock.perform(patch("/offers/" + this.offer.getId()).content(updateJson))
+                .andExpect(status().isAccepted());
+    }
+
+    private String encodeToJson(Object o) throws IOException {
+        MockHttpOutputMessage message = new MockHttpOutputMessage();
+        this.jsonMapper.write(o, MediaType.APPLICATION_JSON, message);
+        return message.getBodyAsString();
     }
 }

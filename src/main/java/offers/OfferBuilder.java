@@ -35,10 +35,10 @@ public class OfferBuilder {
 
     public Offer build() {
         Offer offer = new Offer();
-        offer.setDescription(this.description);
-        offer.setOriginalPrice(this.originalPrice);
-        offer.setDiscount(this.discount);
-        offer.setExpiryDate(this.expiryDate);
+        if (this.description != null) offer.setDescription(this.description);
+        if (this.originalPrice != null) offer.setOriginalPrice(this.originalPrice);
+        if (this.discount != null) offer.setDiscount(this.discount);
+        if (this.description != null) offer.setExpiryDate(this.expiryDate);
 
         return offer;
     }

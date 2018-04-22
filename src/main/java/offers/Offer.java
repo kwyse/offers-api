@@ -57,6 +57,12 @@ public class Offer {
         return isValid;
     }
 
+    public void merge(OfferUpdate other) {
+        if (other.getDescription() != null) this.description = other.getDescription();
+        if (other.getExpiryDate() != null) this.expiryDate = other.getExpiryDate();
+        this.isValid = other.isValid();
+    }
+
     void setDescription(String description) {
         this.description = description;
     }

@@ -2,12 +2,10 @@ package offers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -32,5 +30,18 @@ public class OffersController {
     @SuppressWarnings("unused")
     Collection<Offer> getAll() {
         return this.repository.findAll();
+    }
+
+    @RequestMapping(method = RequestMethod.PATCH, value = "/{id}")
+    @SuppressWarnings("unused")
+    ResponseEntity<?> updateSingle(@PathVariable UUID id, @ModelAttribute OfferUpdate update) {
+        Optional<Offer> offer = this.repository.findById(id);
+
+        if (offer.isPresent()) {
+            offer.get().merge(update);
+            return ResponseEntity.accepted().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
