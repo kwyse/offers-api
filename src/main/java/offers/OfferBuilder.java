@@ -38,7 +38,7 @@ public class OfferBuilder {
         if (this.description != null) offer.setDescription(this.description);
         if (this.originalPrice != null) offer.setOriginalPrice(this.originalPrice);
         if (this.discount != null) offer.setDiscount(this.discount);
-        if (this.description != null) offer.setExpiryDate(this.expiryDate);
+        if (this.expiryDate != null) offer.setExpiryDate(this.expiryDate);
 
         return offer;
     }

@@ -33,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class OffersControllerTest {
     private MockMvc mock;
 
+    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType());
+
     @Autowired
     private OffersRepository repository;
     @Autowired
@@ -97,8 +99,25 @@ public class OffersControllerTest {
 
         this.mock.perform(get("/offers"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(this.offer.getId().toString())))
-                .andExpect(jsonPath("$[1].id", is(anotherOffer.getId().toString())));
+                .andExpect(jsonPath("$.content[0].offer.id", is(this.offer.getId().toString())))
+                .andExpect(jsonPath("$.content[1].offer.id", is(anotherOffer.getId().toString())));
+    }
+
+    @Test
+    public void create() throws Exception {
+        Currency currency = Currency.getInstance("GBP");
+        Offer newOffer = new OfferBuilder()
+                .withDescription("a description")
+                .withOriginalPrice(new Amount(new BigDecimal(25.0), currency))
+                .withDiscount(new RelativeDiscount(new Amount(new BigDecimal(5.0), currency)))
+                .withExpiryDate(Calendar.getInstance().getTime())
+                .build();
+        String offerJson = this.encodeToJson(newOffer);
+
+        this.mock.perform(post("/offers")
+                .contentType(this.contentType)
+                .content(offerJson))
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -106,7 +125,9 @@ public class OffersControllerTest {
         OfferUpdate update = new OfferUpdate(null, null, false);
         String updateJson = this.encodeToJson(update);
 
-        this.mock.perform(patch("/offers/" + this.offer.getId()).content(updateJson))
+        this.mock.perform(patch("/offers/" + this.offer.getId())
+                .contentType(this.contentType)
+                .content(updateJson))
                 .andExpect(status().isAccepted());
     }
 
