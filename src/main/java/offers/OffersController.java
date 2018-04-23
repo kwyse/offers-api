@@ -67,4 +67,20 @@ public class OffersController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+    @SuppressWarnings("unused")
+    ResponseEntity<?> updateSingle(@PathVariable UUID id) {
+        Optional<Offer> maybeOffer = this.repository.findById(id);
+
+        if (maybeOffer.isPresent()) {
+            Offer offer = maybeOffer.get();
+            this.repository.delete(offer);
+            this.repository.flush();
+
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
 }

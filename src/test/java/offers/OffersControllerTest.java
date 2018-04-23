@@ -24,6 +24,7 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -122,7 +123,7 @@ public class OffersControllerTest {
     }
 
     @Test
-    public void updateIsValid() throws Exception {
+    public void updateIsValidOnExisting() throws Exception {
         OfferUpdate update = new OfferUpdate(null, null, false);
         String updateJson = this.encodeToJson(update);
 
@@ -131,8 +132,36 @@ public class OffersControllerTest {
                 .content(updateJson))
                 .andExpect(status().isAccepted());
 
-
         assertFalse(this.repository.findById(this.offer.getId()).get().getIsValid());
+    }
+
+    @Test
+    public void updateIsValidOnNonExisting() throws Exception {
+        OfferUpdate update = new OfferUpdate(null, null, false);
+        String updateJson = this.encodeToJson(update);
+
+        this.mock.perform(patch("/offers/" + UUID.randomUUID())
+                .contentType(this.contentType)
+                .content(updateJson))
+                .andExpect(status().isNotFound());
+
+        assertTrue(this.repository.findById(this.offer.getId()).get().getIsValid());
+    }
+
+    @Test
+    public void deleteExisting() throws Exception {
+        this.mock.perform(delete("/offers/" + this.offer.getId()))
+                .andExpect(status().isOk());
+
+        assertFalse(this.repository.findById(this.offer.getId()).isPresent());
+    }
+
+    @Test
+    public void deleteNonExisting() throws Exception {
+        this.mock.perform(delete("/offers/" + UUID.randomUUID()))
+                .andExpect(status().isNoContent());
+
+        assertTrue(this.repository.findById(this.offer.getId()).isPresent());
     }
 
     private String encodeToJson(Object o) throws IOException {
