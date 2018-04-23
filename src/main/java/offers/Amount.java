@@ -1,12 +1,13 @@
 package offers;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Currency;
 
 @Embeddable
+@JsonSerialize(using = AmountSerializer.class)
 public class Amount {
     private BigDecimal value;
     private Currency currency;
@@ -16,14 +17,15 @@ public class Amount {
 
     public Amount(BigDecimal value, Currency currency) {
         this.value = value;
+        this.currency = currency;
     }
 
     public BigDecimal getValue() {
-        return value;
+        return this.value;
     }
 
     public Currency getCurrency() {
-        return currency;
+        return this.currency;
     }
 
     public Amount subtract(Amount other) {
@@ -35,7 +37,6 @@ public class Amount {
     }
 
     @Override
-    @JsonValue
     public String toString() {
         return String.format("%.2f", this.value);
     }

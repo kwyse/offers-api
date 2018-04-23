@@ -77,8 +77,10 @@ public class OffersControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(this.offer.getId().toString())))
                 .andExpect(jsonPath("$.description", is(this.offer.getDescription())))
-                .andExpect(jsonPath("$.original_price", is(this.offer.getOriginalPrice().toString())))
-                .andExpect(jsonPath("$.discounted_price", is(this.offer.getDiscountedPrice().toString())))
+                .andExpect(jsonPath("$.original_price.value", is(this.offer.getOriginalPrice().toString())))
+                .andExpect(jsonPath("$.original_price.currency", is(this.offer.getOriginalPrice().getCurrency().toString())))
+                .andExpect(jsonPath("$.discounted_price.value", is(this.offer.getDiscountedPrice().toString())))
+                .andExpect(jsonPath("$.discounted_price.currency", is(this.offer.getDiscountedPrice().getCurrency().toString())))
                 .andExpect(jsonPath("$.expiry_date", is(new SimpleDateFormat("yyyy-MM-dd").format(this.offer.getExpiryDate()))))
                 .andExpect(jsonPath("$.is_valid", is(this.offer.getIsValid())));
     }
