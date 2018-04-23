@@ -3,6 +3,7 @@ package offers;
 import offers.discount.Discount;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -54,7 +55,7 @@ public class Offer {
     }
 
     public boolean getIsValid() {
-        return isValid;
+        return isValid && this.expiryDate.after(Calendar.getInstance().getTime());
     }
 
     public void merge(OfferUpdate other) {

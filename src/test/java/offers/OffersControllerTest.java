@@ -58,7 +58,7 @@ public class OffersControllerTest {
         this.mock = MockMvcBuilders.webAppContextSetup(context).build();
         this.repository.deleteAllInBatch();
 
-        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         this.offer = new OfferBuilder()
@@ -91,10 +91,13 @@ public class OffersControllerTest {
 
     @Test
     public void getAll() throws Exception {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
         Currency currency = Currency.getInstance("GBP");
         Offer anotherOffer = new OfferBuilder()
                 .withOriginalPrice(new Amount(new BigDecimal(25.0), currency))
                 .withDiscount(new RelativeDiscount(new Amount(new BigDecimal(5.0), currency)))
+                .withExpiryDate(calendar.getTime())
                 .build();
 
         anotherOffer = this.repository.save(anotherOffer);
