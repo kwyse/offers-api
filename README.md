@@ -15,7 +15,7 @@ The project runs against Gradle 4.6 and JDK 10.
 $ gradle build
 
 # To launch the server locally
-$ java -jar build/libs/payments-api.jar
+$ java -jar build/libs/offers-api.jar
 ```
 
 ## Design
