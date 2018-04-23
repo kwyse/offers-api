@@ -55,10 +55,13 @@ public class OffersController {
     @RequestMapping(method = RequestMethod.PATCH, value = "/{id}")
     @SuppressWarnings("unused")
     ResponseEntity<?> updateSingle(@PathVariable UUID id, @ModelAttribute OfferUpdate update) {
-        Optional<Offer> offer = this.repository.findById(id);
+        Optional<Offer> maybeOffer = this.repository.findById(id);
 
-        if (offer.isPresent()) {
-            offer.get().merge(update);
+        if (maybeOffer.isPresent()) {
+            Offer offer = maybeOffer.get();
+            offer.merge(update);
+            this.repository.saveAndFlush(offer);
+
             return ResponseEntity.accepted().build();
         } else {
             return ResponseEntity.notFound().build();

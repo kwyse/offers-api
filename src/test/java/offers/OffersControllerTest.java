@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -129,6 +130,9 @@ public class OffersControllerTest {
                 .contentType(this.contentType)
                 .content(updateJson))
                 .andExpect(status().isAccepted());
+
+
+        assertFalse(this.repository.findById(this.offer.getId()).get().getIsValid());
     }
 
     private String encodeToJson(Object o) throws IOException {
