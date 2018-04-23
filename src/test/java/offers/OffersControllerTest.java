@@ -98,7 +98,7 @@ public class OffersControllerTest {
         Currency currency = Currency.getInstance("GBP");
         Offer anotherOffer = new OfferBuilder()
                 .withOriginalPrice(new Amount(new BigDecimal(25.0), currency))
-                .withDiscount(new RelativeDiscount(new Amount(new BigDecimal(5.0), currency)))
+                .withDiscount(new RelativeDiscount(new BigDecimal(5.0)))
                 .withExpiryDate(calendar.getTime())
                 .build();
 
@@ -116,7 +116,7 @@ public class OffersControllerTest {
         Offer newOffer = new OfferBuilder()
                 .withDescription("a description")
                 .withOriginalPrice(new Amount(new BigDecimal(25.0), currency))
-                .withDiscount(new RelativeDiscount(new Amount(new BigDecimal(5.0), currency)))
+                .withDiscount(new RelativeDiscount(new BigDecimal(5.0)))
                 .withExpiryDate(Calendar.getInstance().getTime())
                 .build();
         String offerJson = this.encodeToJson(newOffer);

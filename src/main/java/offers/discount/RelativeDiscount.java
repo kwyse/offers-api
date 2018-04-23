@@ -2,10 +2,12 @@ package offers.discount;
 
 import offers.Amount;
 
-public class RelativeDiscount implements Discount {
-    private Amount amount;
+import java.math.BigDecimal;
 
-    public RelativeDiscount(Amount amount) {
+public class RelativeDiscount implements Discount {
+    private BigDecimal amount;
+
+    public RelativeDiscount(BigDecimal amount) {
         this.amount = amount;
     }
 

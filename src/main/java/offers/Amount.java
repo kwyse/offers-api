@@ -28,8 +28,8 @@ public class Amount {
         return this.currency;
     }
 
-    public Amount subtract(Amount other) {
-        return new Amount(this.value.subtract(other.getValue()), this.currency);
+    public Amount subtract(BigDecimal other) {
+        return new Amount(this.value.subtract(other), this.currency);
     }
 
     public Amount multiply(double other) {

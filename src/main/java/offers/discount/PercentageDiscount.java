@@ -11,6 +11,6 @@ public class PercentageDiscount implements Discount {
 
     @Override
     public Amount apply(Amount original) {
-        return original.subtract(original.multiply(this.percentage / 100));
+        return original.subtract(original.multiply(this.percentage / 100).getValue());
     }
 }
