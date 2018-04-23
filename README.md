@@ -1,4 +1,4 @@
-# Offers API
+# Offers API
 
 | Service | Status |
 | --- | --- |
